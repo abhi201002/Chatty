@@ -5,7 +5,6 @@ import "./index.css";
 import { Layer } from "./datalayer.js";
 import { initialState, reducer } from "./reducer.js";
 import {disableReactDevTools} from '@fvilers/disable-react-devtools'
-// require("dotenv").config();
 
 if(process.env.NODE_ENV == 'production') disableReactDevTools();
 
