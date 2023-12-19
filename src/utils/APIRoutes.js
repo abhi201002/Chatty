@@ -1,4 +1,4 @@
-require("dotenv").config();
+// require("dotenv").config();
 export const host = process.env.NODE.ENV !== 'production' ? "http://localhost:5000" : "https://chatty-api-qof8.onrender.com"
 export const loginRoute = `${host}/api/auth/login`;
 export const registerRoute = `${host}/api/auth/register`;
