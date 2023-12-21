@@ -38,7 +38,11 @@ function Notifcation({changenotify}) {
                     return(
                         <Request>
                             <div className="info">
-                                <img src="https://i.seadn.io/gae/2hDpuTi-0AMKvoZJGd-yKWvK4tKdQr_kLIpB_qSeMau2TNGCNidAosMEvrEXFO9G6tmlFlPQplpwiqirgrIPWnCKMvElaYgI-HiVvXc?auto=format&dpr=1&w=1000" alt="" />
+                                {/* <img src="https://i.seadn.io/gae/2hDpuTi-0AMKvoZJGd-yKWvK4tKdQr_kLIpB_qSeMau2TNGCNidAosMEvrEXFO9G6tmlFlPQplpwiqirgrIPWnCKMvElaYgI-HiVvXc?auto=format&dpr=1&w=1000" alt="" /> */}
+                                <img
+                                    src={`data:image/svg+xml;base64,${Item.avatarImage}`}
+                                    alt=""
+                                />
                                 <div>{Item.username}</div>
                             </div>
                             <div className="selection">

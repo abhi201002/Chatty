@@ -7,7 +7,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { setAvatarRoute } from "../utils/APIRoutes";
+import { useDataLayer } from "../datalayer";
 export default function SetAvatar() {
+  const [data, dispatch] = useDataLayer()
   const api = `https://api.multiavatar.com/4645646`;
   const navigate = useNavigate();
   const [avatars, setAvatars] = useState([]);
@@ -45,6 +47,7 @@ export default function SetAvatar() {
           process.env.REACT_APP_LOCALHOST_KEY,
           JSON.stringify(user)
         );
+        dispatch({type: "ADD_USER"})
         navigate("/");
       } else {
         toast.error("Error setting avatar. Please try again.", toastOptions);

@@ -6,9 +6,11 @@ import Logo from "../assets/logo.svg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { registerRoute } from "../utils/APIRoutes";
+import { useDataLayer } from "../datalayer";
 
 export default function Register() {
   const navigate = useNavigate();
+  const [data, dispatch] = useDataLayer()
   const toastOptions = {
     position: "bottom-right",
     autoClose: 8000,
@@ -79,6 +81,7 @@ export default function Register() {
           process.env.REACT_APP_LOCALHOST_KEY,
           JSON.stringify(data.user)
         );
+        // dispatch({type: "ADD_USER"})
         navigate("/");
       }
     }

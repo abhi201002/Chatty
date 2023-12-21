@@ -9,3 +9,4 @@ export const recieveMessageRoute = `${host}/api/messages/getmsg`;
 export const setAvatarRoute = `${host}/api/auth/setavatar`;
 export const searchRoute = `${host}/api/auth/search`;
 export const friendRequest = `${host}/api/friends`
+export const getFriendRoutes = `${host}/api/friends/getAllfriends`

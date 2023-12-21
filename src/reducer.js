@@ -25,6 +25,8 @@ export const reducer = (state, action) => {
                 initialState[key] = null;
             })
             return{initialState}
+        case "SET_DP":
+            return 
         default:
             return {state}
     }
