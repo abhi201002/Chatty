@@ -32,12 +32,12 @@ export default function Contacts({ contacts, changeChat }) {
                 {contacts.map((contact, index) => {
                     return (
                     <div
-                        key={contact._id}
-                        className={`contact ${
-                        index === currentSelected ? "selected" : ""
-                        }`}
-                        onClick={() => changeCurrentChat(index, contact)}
-                        >
+                      key={contact._id}
+                      className={`contact ${
+                      index === currentSelected ? "selected" : ""
+                      }`}
+                      onClick={() => changeCurrentChat(index, contact)}
+                      >
                         <div className="avatar">
                         <img
                             src={`data:image/svg+xml;base64,${contact.avatarImage}`}
@@ -66,17 +66,17 @@ export default function Contacts({ contacts, changeChat }) {
           </div>
           <div className="notify">
             {!notification?
-              (<>
+              (<div className="side">
                 <div className="friends">
                   <button className={`toggle ${!search? "active":""}`} onClick={() => {setSearch(false)}}>Friends</button>
                   <button className={`toggle ${search? "active":""}`} onClick={() => {setSearch(true)}}>Search</button>
                 </div>
-                <div className="side">
+                <div className="fri">
                 {
                   handleSearch(search)
                 }
                 </div>
-              </>)
+              </div>)
               :
               <Notifcation changenotify = {changenotify}/>
             }
@@ -102,7 +102,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  grid-template-rows: 10% 75% 15%;
+  /* grid-template-rows: 10% 75% 15%; */
   overflow: hidden;
   background-color: #080420;
   .brand {
@@ -121,7 +121,8 @@ const Container = styled.div`
     }
   }
   .notify{
-    height: 100%;
+    flex: 70%;
+    overflow-y: hidden;
   }
   .friends{
     display: flex;
@@ -129,6 +130,7 @@ const Container = styled.div`
   }
   .friends button{
     cursor: pointer;
+    transition: 0.2s ease-in-out;
   }
   .toggle{
     flex: 50%;
@@ -141,17 +143,17 @@ const Container = styled.div`
     background-color: #ffffff;
   }
   .side{
-    /* flex: 70%; */
-    height: 100%;
-    /* border: 2px solid purple; */
-  }
-  .contacts {
     height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    .fri{
+      height: 90%;
+    }
+  }
+  .contacts {
+    /* height: 100%; */
+    height: 100%;
     overflow: auto;
-    gap: 0.8rem;
     &::-webkit-scrollbar {
       width: 0.2rem;
       &-thumb {
@@ -160,11 +162,15 @@ const Container = styled.div`
         border-radius: 1rem;
       }
     }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
     .contact {
       background-color: #ffffff34;
       min-height: 5rem;
       cursor: pointer;
-      width: 90%;
+      width: 100%;
       border-radius: 0.2rem;
       padding: 0.4rem;
       display: flex;
@@ -181,11 +187,20 @@ const Container = styled.div`
           color: white;
         }
       }
+      :hover{
+        background-color: #808080a1;
+      }
     }
     .selected {
       background-color: #9a86f3;
+      :hover{
+        background-color: #9a86f3;
+      }
     }
   }
+  /* .contacts :hover{
+    background-color: grey;
+  } */
 
   .current-user {
     flex: 15%;
@@ -198,7 +213,12 @@ const Container = styled.div`
       img {
         height: 4rem;
         max-inline-size: 100%;
+        cursor: pointer;
       }
+    }
+    .avatar :hover{
+      transform: scale(1.1);
+      transition: transform 200ms;
     }
     .username {
       h2 {

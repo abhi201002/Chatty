@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import { IoMdSend } from "react-icons/io";
 import styled from "styled-components";
 import Picker from "emoji-picker-react";
+import { useDataLayer } from "../datalayer";
 
-export default function ChatInput({ handleSendMsg }) {
+export default function ChatInput({currentChat, socket, handleSendMsg }) {
+  const [data, dispatch] = useDataLayer();
   const [msg, setMsg] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const handleEmojiPickerhideShow = () => {
@@ -25,6 +27,17 @@ export default function ChatInput({ handleSendMsg }) {
     }
   };
 
+  const handleChat = (e) => {
+    socket.current.emit(("typing"),{
+      from: data._id,
+      to: currentChat._id
+    })
+
+    setMsg(e.target.value)
+  }
+
+  
+
   return (
     <Container>
       <div className="button-container">
@@ -37,7 +50,7 @@ export default function ChatInput({ handleSendMsg }) {
         <input
           type="text"
           placeholder="type your message here"
-          onChange={(e) => setMsg(e.target.value)}
+          onChange={(e) => handleChat(e)}
           value={msg}
         />
         <button type="submit">

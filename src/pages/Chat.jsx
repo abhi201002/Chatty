@@ -12,6 +12,7 @@ import { useDataLayer } from "../datalayer";
 export default function Chat() {
   const navigate = useNavigate();
   const socket = useRef();
+  const currentId = useRef();
   const [contacts, setContacts] = useState([]);
   const [currentChat, setCurrentChat] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
@@ -43,6 +44,8 @@ export default function Chat() {
     }
   }, [currentUser]);
   const handleChatChange = (chat) => {
+    socket.current.off(`msg-recieve-${currentId.current}`)
+    currentId.current = chat._id;
     setCurrentChat(chat);
   };
   return (
@@ -53,7 +56,7 @@ export default function Chat() {
           {currentChat === undefined ? (
             <Welcome />
           ) : (
-            <ChatContainer currentChat={currentChat} socket={socket} />
+            <ChatContainer currentChat={currentChat} socket={socket} id = {currentId}/>
           )}
         </div>
       </Container>

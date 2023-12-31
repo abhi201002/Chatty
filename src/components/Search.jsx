@@ -105,8 +105,17 @@ function Search() {
 const SearchBox = styled.div`
     height: 100%;
     .search-item{
-        height: 100%;
+        height: 83%;
         color: white;
+        overflow: auto;
+        &::-webkit-scrollbar {
+        width: 0.2rem;
+        &-thumb {
+          background-color: #ffffff39;
+          width: 0.1rem;
+          border-radius: 1rem;
+        }
+      }
     }
     .message{
         height: 100%;

@@ -3,6 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import { useNavigate, Link } from "react-router-dom";
 import Logo from "../assets/logo.svg";
+import Load from "../assets/loading1.svg"
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { loginRoute } from "../utils/APIRoutes";
@@ -11,6 +12,7 @@ import { useDataLayer } from "../datalayer";
 export default function Login() {
   const navigate = useNavigate();
   const [values, setValues] = useState({ username: "", password: "" });
+  const [loading, setLoading] = useState(false);
   const [state, dispatch] = useDataLayer()
   const toastOptions = {
     position: "bottom-right",
@@ -44,11 +46,13 @@ export default function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (validateForm()) {
+      setLoading(true);
       const { username, password } = values;
       const { data } = await axios.post(loginRoute, {
         username,
         password,
       });
+      setLoading(false)
       if (data.status === false) {
         toast.error(data.msg, toastOptions);
       }
@@ -86,7 +90,14 @@ export default function Login() {
             name="password"
             onChange={(e) => handleChange(e)}
           />
-          <button type="submit">Log In</button>
+          <button type="submit">
+            <div>Log In</div>
+            {loading ?
+              <img src={Load} alt="" />
+              :
+              ""  
+            }
+          </button>
           <span>
             Don't have an account ? <Link to="/register">Create One.</Link>
           </span>
@@ -150,6 +161,10 @@ const FormContainer = styled.div`
     cursor: pointer;
     border-radius: 0.4rem;
     font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     text-transform: uppercase;
     &:hover {
       background-color: #4e0eff;

@@ -6,12 +6,15 @@ import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { sendMessageRoute, recieveMessageRoute } from "../utils/APIRoutes";
 import Info from "./Info";
+import Typing from "../assets/typing.svg"
 import { useDataLayer } from "../datalayer";
 
-export default function ChatContainer({ currentChat, socket }) {
+export default function ChatContainer({ currentChat, socket , id}) {
   const [messages, setMessages] = useState([]);
   const [info, setInfo] = useState(false);
+  const [typing, setTyping] = useState(false);
   const scrollRef = useRef();
+  // const id = useRef();
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [data, dispatch] = useDataLayer();
 
@@ -58,12 +61,25 @@ export default function ChatContainer({ currentChat, socket }) {
   };
 
   useEffect(() => {
+    console.log(currentChat._id)
+    // id.current = currentChat._id
     if (socket.current) {
-      socket.current.on("msg-recieve", (msg) => {
-        setArrivalMessage({ fromSelf: false, message: msg });
+      socket.current.on(`msg-recieve-${id.current}`, (msg) => {
+        console.log("Message from ", id.current)
+        setTyping(false);
+        setArrivalMessage({ fromSelf: false , message: msg.msg });
       });
     }
-  }, []);
+  }, [currentChat]);
+  let timeout;
+  useEffect(() => {
+    socket.current.on(`typing-${currentChat._id}`,(mes) =>{
+      setTyping(true);
+      timeout = setTimeout(() => {
+        setTyping(false);
+      }, 5000)
+    })
+  }, [currentChat])
 
   useEffect(() => {
     arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
@@ -83,16 +99,16 @@ export default function ChatContainer({ currentChat, socket }) {
               alt=""
             />
           </div>
-          {
-            info ?
-            <Info/>
-            :
-            ""
-          }
           <div className="username">
             <h3>{currentChat.username}</h3>
           </div>
         </div>
+        {
+          info ?
+          <Info/>
+          :
+          ""
+        }
         <Logout />
       </div>
       <div className="chat-messages">
@@ -111,8 +127,20 @@ export default function ChatContainer({ currentChat, socket }) {
             </div>
           );
         })}
+        {
+          typing ?
+          <div ref={scrollRef}>
+            <div className="message recieved">
+              <div className="content">
+                <img src={Typing} alt="" />
+              </div>
+            </div>
+          </div>
+          :
+          ""
+        }
       </div>
-      <ChatInput handleSendMsg={handleSendMsg} />
+      <ChatInput currentChat = {currentChat} socket = {socket} handleSendMsg={handleSendMsg} />
     </Container>
   );
 }
@@ -130,21 +158,31 @@ const Container = styled.div`
     justify-content: space-between;
     align-items: center;
     position: relative;
-    padding: 0 2rem;
+    padding: 0px 2rem 0px 1rem;
+    /* border: 1px solid red; */
+    height: fit-content;
     .user-details {
       display: flex;
       position: relative;
       align-items: center;
       gap: 1rem;
+      padding: 5px 15px;
+      border-radius: 12px;
+      cursor: pointer;
       .avatar {
         img {
-          height: 3rem;
+          height: 2.3rem;
         }
       }
       .username {
         h3 {
           color: white;
         }
+      }
+      :hover{
+        /* border: 1px solid grey; */
+        background-color: grey;
+        transition: all 0.25s ease-in-out;
       }
     }
   }
