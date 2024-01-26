@@ -5,19 +5,11 @@ import { useDataLayer } from "../datalayer";
 export default function Welcome() {
   const [data, dispatch] = useDataLayer();
   const [userName, setUserName] = useState("");
-  // const check = () => {
-  //   console.log(data);
-  //   dispatch({type: "CHECK"});
-  //   console.log(data);
-  // }
   useEffect(async () => {
     setUserName(
       data.username
     );
-  }, []);
-  // useEffect(() => {
-  //   console.log("ITs working")
-  // }, [data.username])
+  }, [data]);
   return (
     <Container>
       <img src={Robot} alt="" />

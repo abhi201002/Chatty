@@ -44,6 +44,7 @@ export default function Login() {
   };
 
   const handleSubmit = async (event) => {
+    console.log(values.username, values.password)
     event.preventDefault();
     if (validateForm()) {
       setLoading(true);

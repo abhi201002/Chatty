@@ -7,10 +7,15 @@ import axios from 'axios';
 import { friendRequest } from '../utils/APIRoutes';
 import { useDataLayer } from '../datalayer';
 
-function Notifcation({changenotify}) {
+function Notifcation({changenotify, socket}) {
     const [request, setRequest] = useState([]);
     const [data, dispatch] = useDataLayer();
     const cur_user = data._id;
+    useEffect(() =>{
+        socket.current.on("rec-request", (data) => {
+            setRequest([...request, {username: data.from, avatarImage: data.img, _id: data.id}]);
+        })
+    }, [])
     const handleNotification = async () => {
         const result = await axios.get(`${friendRequest}/getRequest/${cur_user}`);
 
@@ -26,7 +31,7 @@ function Notifcation({changenotify}) {
   return (
     <Notify>
         <div className="notification">
-            NOTIFICATION
+            Notification
             <div>
             <img src={Cross1} alt="" onClick={() => {changenotify()}}/>
             </div>
@@ -38,7 +43,6 @@ function Notifcation({changenotify}) {
                     return(
                         <Request>
                             <div className="info">
-                                {/* <img src="https://i.seadn.io/gae/2hDpuTi-0AMKvoZJGd-yKWvK4tKdQr_kLIpB_qSeMau2TNGCNidAosMEvrEXFO9G6tmlFlPQplpwiqirgrIPWnCKMvElaYgI-HiVvXc?auto=format&dpr=1&w=1000" alt="" /> */}
                                 <img
                                     src={`data:image/svg+xml;base64,${Item.avatarImage}`}
                                     alt=""
@@ -46,16 +50,12 @@ function Notifcation({changenotify}) {
                                 <div>{Item.username}</div>
                             </div>
                             <div className="selection">
-                                {/* <button className="accept"> */}
                                 <div>
                                     <img src={Accept} alt="" onClick={() => {handleRequest(Item?._id, "accept")}} />
                                 </div>
-                                {/* </button> */}
-                                {/* <button className="reject"> */}
                                 <div>
                                     <img src={Cross} alt="" onClick={() => {handleRequest(Item?._id, "reject")}}/>
                                 </div>
-                                {/* </button> */}
                             </div>
                         </Request>
                     )
@@ -72,7 +72,6 @@ const Notify = styled.div`
     height: 100%;
     .notification{
         color: white;
-        /* border: 2px solid red; */
         height: 50px;
         display: flex;
         flex-direction: row;
@@ -111,11 +110,9 @@ const Request = styled.div`
     justify-content: space-between;
     align-items: center;
     color: white;
-    /* border: 1px solid red; */
     padding: 10px 10px;
 
     .info, .selection{
-        /* border: 2px solid green; */
         display: flex;
         flex-direction: row;
         justify-content: space-between;

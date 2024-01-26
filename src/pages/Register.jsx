@@ -85,7 +85,6 @@ export default function Register() {
           process.env.REACT_APP_LOCALHOST_KEY,
           JSON.stringify(data.user)
         );
-        // dispatch({type: "ADD_USER"})
         navigate("/");
       }
     }
@@ -194,7 +193,6 @@ const FormContainer = styled.div`
     cursor: pointer;
     border-radius: 0.4rem;
     font-size: 1rem;
-    /* height: 50px; */
     display: flex;
     align-items: center;
     justify-content: center;

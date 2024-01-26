@@ -7,27 +7,13 @@ import axios from "axios";
 import { sendMessageRoute, recieveMessageRoute } from "../utils/APIRoutes";
 import Info from "./Info";
 import Typing from "../assets/typing.svg"
+import Load from "../assets/messageLoader.svg"
 import { useDataLayer } from "../datalayer";
 
-export default function ChatContainer({ currentChat, socket , id}) {
-  const [messages, setMessages] = useState([]);
+export default function ChatContainer({ currentChat, socket , typing, messages, handleSendMsg, loading}) {
   const [info, setInfo] = useState(false);
-  const [typing, setTyping] = useState(false);
   const scrollRef = useRef();
-  // const id = useRef();
-  const [arrivalMessage, setArrivalMessage] = useState(null);
   const [data, dispatch] = useDataLayer();
-
-  useEffect(async () => {
-    // const data = await JSON.parse(
-    //   localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
-    // );
-    const response = await axios.post(recieveMessageRoute, {
-      from: data._id,
-      to: currentChat._id,
-    });
-    setMessages(response.data);
-  }, [currentChat]);
 
   useEffect(() => {
     const getCurrentChat = async () => {
@@ -39,51 +25,6 @@ export default function ChatContainer({ currentChat, socket , id}) {
     };
     getCurrentChat();
   }, [currentChat]);
-
-  const handleSendMsg = async (msg) => {
-    // const data = await JSON.parse(
-    //   localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
-    // );
-    socket.current.emit("send-msg", {
-      to: currentChat._id,
-      from: data._id,
-      msg,
-    });
-    await axios.post(sendMessageRoute, {
-      from: data._id,
-      to: currentChat._id,
-      message: msg,
-    });
-
-    const msgs = [...messages];
-    msgs.push({ fromSelf: true, message: msg });
-    setMessages(msgs);
-  };
-
-  useEffect(() => {
-    console.log(currentChat._id)
-    // id.current = currentChat._id
-    if (socket.current) {
-      socket.current.on(`msg-recieve-${id.current}`, (msg) => {
-        console.log("Message from ", id.current)
-        setTyping(false);
-        setArrivalMessage({ fromSelf: false , message: msg.msg });
-      });
-    }
-  }, [currentChat]);
-  let timeout;
-  useEffect(() => {
-    socket.current.on(`typing-${currentChat._id}`,(mes) =>{
-      setTyping(true);
-      timeout = setTimeout(() => {
-        setTyping(false);
-      }, 5000)
-    })
-  }, [currentChat])
-
-  useEffect(() => {
-    arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
-  }, [arrivalMessage]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -111,35 +52,47 @@ export default function ChatContainer({ currentChat, socket , id}) {
         }
         <Logout />
       </div>
-      <div className="chat-messages">
-        {messages.map((message) => {
-          return (
+      {
+        loading ?
+        <div className="loading">
+          <img src={Load} alt="" />
+          <div>
+            Messages on there way !
+          </div>
+        </div>
+
+        :
+
+        <div className="chat-messages">
+          {messages?.map((message) => {
+            return (
+              <div ref={scrollRef} key={uuidv4()}>
+                <div
+                  className={`message ${
+                    message.fromSelf ? "sended" : "recieved"
+                  }`}
+                  >
+                  <div className="content ">
+                    <p>{message.message}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {
+            typing ?
             <div ref={scrollRef} key={uuidv4()}>
-              <div
-                className={`message ${
-                  message.fromSelf ? "sended" : "recieved"
-                }`}
-              >
-                <div className="content ">
-                  <p>{message.message}</p>
+              <div className="message recieved">
+                <div className="content">
+                  <img src={Typing} alt="" />
                 </div>
               </div>
             </div>
-          );
-        })}
-        {
-          typing ?
-          <div ref={scrollRef}>
-            <div className="message recieved">
-              <div className="content">
-                <img src={Typing} alt="" />
-              </div>
-            </div>
-          </div>
-          :
-          ""
-        }
-      </div>
+            :
+            ""
+          }
+        </div>
+      }
       <ChatInput currentChat = {currentChat} socket = {socket} handleSendMsg={handleSendMsg} />
     </Container>
   );
@@ -159,7 +112,6 @@ const Container = styled.div`
     align-items: center;
     position: relative;
     padding: 0px 2rem 0px 1rem;
-    /* border: 1px solid red; */
     height: fit-content;
     .user-details {
       display: flex;
@@ -180,7 +132,6 @@ const Container = styled.div`
         }
       }
       :hover{
-        /* border: 1px solid grey; */
         background-color: grey;
         transition: all 0.25s ease-in-out;
       }
@@ -227,5 +178,16 @@ const Container = styled.div`
         background-color: #9900ff20;
       }
     }
+  }
+
+  .loading{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+  }
+  .loading img{
+    height: 100px;
   }
 `;
